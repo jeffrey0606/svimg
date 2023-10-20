@@ -1,13 +1,13 @@
-import getComponentAttributes from './get-component-attributes';
-import type { GetComponentAttributesOutput } from './get-component-attributes';
-import { join, dirname } from 'node:path';
-import pathToUrl from '../core/path-to-url';
-import Queue from '../core/queue';
-import createPlaceholder from '../placeholder/create-placeholder';
-import processImage from '../image-processing/process-image';
-import type { SrcGenerator } from '../core/path-to-url';
-import { PLACEHOLDER_WIDTH } from '../constants/defaults';
-import type Image from '../image-processing/image';
+import getComponentAttributes from "./get-component-attributes";
+import type { GetComponentAttributesOutput } from "./get-component-attributes";
+import { join, dirname } from "node:path";
+import pathToUrl from "../core/path-to-url";
+import Queue from "../core/queue";
+import createPlaceholder from "../placeholder/create-placeholder";
+import processImage from "../image-processing/process-image";
+import type { SrcGenerator } from "../core/path-to-url";
+import { PLACEHOLDER_WIDTH } from "../constants/defaults";
+import type Image from "../image-processing/image";
 
 interface GenerateComponentAttributesOptions {
   src: string;
@@ -33,7 +33,7 @@ function transformImagePath(
     src,
     publicPath,
     srcGenerator,
-  }: GenerateComponentAttributesOptions,
+  }: GenerateComponentAttributesOptions
 ): Image {
   return {
     ...image,
@@ -48,7 +48,7 @@ function transformImagePath(
 }
 
 export default async function generateComponentAttributes(
-  options: GenerateComponentAttributesOptions,
+  options: GenerateComponentAttributesOptions
 ): Promise<GetComponentAttributesOutput> {
   let {
     src,
@@ -65,16 +65,16 @@ export default async function generateComponentAttributes(
   } = options;
 
   if (!src) {
-    throw new Error('Src is required');
+    throw new Error("Src is required");
   }
   if (!inputDir) {
-    throw new Error('Input dir is required');
+    throw new Error("Input dir is required");
   }
   if (!outputDir) {
-    throw new Error('Output dir is required');
+    throw new Error("Output dir is required");
   }
 
-  if (typeof embedPlaceholder === 'undefined') {
+  if (typeof embedPlaceholder === "undefined") {
     // TODO: change to false with major version
     embedPlaceholder = true;
   }

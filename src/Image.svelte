@@ -1,24 +1,28 @@
 <svelte:options tag={null} />
 
 <script>
-  import { onMount, tick } from 'svelte';
+  import { onMount, tick } from "svelte";
 
   export let src;
   export let alt;
-  let className = '';
+  let className = "";
   export { className as class };
+  let styleName = "";
+  export { styleName as style };
   export let srcset;
-  export let srcsetwebp = '';
-  export let srcsetavif = '';
-  export let placeholder = '';
-  export let placeholdersrc = '';
-  export let placeholderwebp = '';
-  export let placeholderavif = '';
-  export let width = '';
+  export let srcsetwebp = "";
+  export let srcsetavif = "";
+  export let placeholder = "";
+  export let placeholdersrc = "";
+  export let placeholderwebp = "";
+  export let placeholderavif = "";
+  export let width = "";
   export let aspectratio;
   export let immediate = false;
   export let blur = 40;
-  export let quality = '';
+  export let quality = "";
+  export let onLoad = undefined;
+  export let onError = undefined;
 
   const srcLocal = src; // suppress unused-export-let
   const qualityLocal = quality;
@@ -51,6 +55,9 @@
     !supportsCssAspectRatio && aspectratio && (fixedWidth || hasResizeObserver);
 
   function onImgLoad() {
+    if (onLoad) {
+      onLoad();
+    }
     imgLoaded = true;
     if (!immediate) {
       setTimeout(() => {
@@ -72,11 +79,11 @@
     }
 
     supportsCssAspectRatio = CSS.supports(
-      'aspect-ratio',
-      'var(--svimg-aspect-ratio)',
+      "aspect-ratio",
+      "var(--svimg-aspect-ratio)"
     );
 
-    native = 'loading' in HTMLImageElement.prototype;
+    native = "loading" in HTMLImageElement.prototype;
     if (native || immediate) {
       return () => {
         if (ro) {
@@ -94,7 +101,7 @@
       },
       {
         rootMargin: `100px`,
-      },
+      }
     );
 
     io.observe(container);
@@ -133,7 +140,7 @@
     ? `max-width:${width}px;`
     : ''} --svimg-blur:{blur}px; {aspectratio
     ? `--svimg-aspect-ratio:${aspectratio};`
-    : ''}"
+    : ''} ; {styleName}"
   class="wrapper {className}"
 >
   <picture>
@@ -157,10 +164,16 @@
       alt={imgLoaded || imgError ? alt : undefined}
       width={imageWidth}
       height={imageHeight}
-      loading={!immediate ? 'lazy' : undefined}
-      class="image {imgLoaded || immediate ? 'loaded' : ''}"
+      loading={!immediate ? "lazy" : undefined}
+      class="image {className} {imgLoaded || immediate ? 'loaded' : ''}"
+      style={styleName}
       on:load={onImgLoad}
-      on:error={() => (imgError = true)}
+      on:error={() => {
+        if (onError) {
+          onError();
+        }
+        imgError = true;
+      }}
     />
   </picture>
   {#if !immediate && !hidePlaceholder}
@@ -172,9 +185,16 @@
         {#if placeholderwebp}
           <source type="image/webp" srcset={placeholderwebp} />
         {/if}
-        <img class="placeholder" srcset={placeholdersrc} {alt} width={imageWidth} height={imageHeight} style={useAspectRatioFallback
-          ? `width:${imageWidth}px; height:${imageHeight}px;`
-          : ''} />
+        <img
+          class="placeholder"
+          srcset={placeholdersrc}
+          {alt}
+          width={imageWidth}
+          height={imageHeight}
+          style={useAspectRatioFallback
+            ? `width:${imageWidth}px; height:${imageHeight}px;`
+            : ""}
+        />
       </picture>
     {:else}
       <img
@@ -185,7 +205,7 @@
         height={imageHeight}
         style={useAspectRatioFallback
           ? `width:${imageWidth}px; height:${imageHeight}px;`
-          : ''}
+          : ""}
       />
     {/if}
   {/if}
@@ -204,7 +224,7 @@
   }
   .wrapper img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     aspect-ratio: var(--svimg-aspect-ratio);
   }
