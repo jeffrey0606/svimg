@@ -14,7 +14,8 @@
   "scripts": {
     "test": "jest",
     "build": "rollup -c",
-    "watch": "rollup -cw"
+    "watch": "rollup -cw",
+    "install": "npm run build"
   },
   "engines": {
     "node": ">=14.18.0"
