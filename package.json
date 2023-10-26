@@ -15,7 +15,7 @@
     "test": "jest",
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "install": "NODE_OPTIONS='--experimental-specifier-resolution=node' npm run build"
+    "install": "NODE_OPTIONS='--experimental-specifier-resolution=node' && npm run build"
   },
   "engines": {
     "node": ">=14.18.0"
