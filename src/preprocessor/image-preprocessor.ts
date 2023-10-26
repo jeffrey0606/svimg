@@ -1,11 +1,11 @@
 import type {
   PreprocessorGroup,
   Processed,
-} from 'svelte/types/compiler/preprocess';
-import Queue from '../core/queue';
-import replaceAsync from 'string-replace-async';
-import processImageElement from './process-image-element';
-import type { SrcGenerator } from '../core/path-to-url';
+} from "svelte/types/compiler/preprocess";
+import Queue from "../core/queue";
+import replaceAsync from "string-replace-async";
+import processImageElement from "./process-image-element";
+import type { SrcGenerator } from "../core/path-to-url";
 
 export interface ImagePreprocessorOptions {
   /**
@@ -85,8 +85,8 @@ export interface ImagePreprocessorOptions {
  * @param options Image preprocessor options
  * @returns Svelte preprocessor
  */
-export default function imagePreprocessor(
-  options?: ImagePreprocessorOptions,
+export function imagePreprocessor(
+  options?: ImagePreprocessorOptions
 ): PreprocessorGroup {
   const queue = new Queue();
 
@@ -94,7 +94,7 @@ export default function imagePreprocessor(
     async markup({ content }): Promise<Processed> {
       return {
         code: await replaceAsync(content, /<Image[^>]+>/g, (element) =>
-          processImageElement(element, queue, options),
+          processImageElement(element, queue, options)
         ),
       };
     },

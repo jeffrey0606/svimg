@@ -1,5 +1,5 @@
-import type { PreprocessorGroup } from 'svelte/types/compiler/preprocess';
-import type { SrcGenerator } from '../core/path-to-url';
+import type { PreprocessorGroup } from "svelte/types/compiler/preprocess";
+import type { SrcGenerator } from "../core/path-to-url";
 export interface ImagePreprocessorOptions {
     /**
      * The static asset directory where
@@ -71,4 +71,4 @@ export interface ImagePreprocessorOptions {
  * @param options Image preprocessor options
  * @returns Svelte preprocessor
  */
-export default function imagePreprocessor(options?: ImagePreprocessorOptions): PreprocessorGroup;
+export declare function imagePreprocessor(options?: ImagePreprocessorOptions): PreprocessorGroup;

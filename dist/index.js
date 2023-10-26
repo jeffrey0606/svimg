@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var PQueue = require('p-queue');
 var replaceAsync = require('string-replace-async');
 var node_path = require('node:path');
@@ -529,5 +527,5 @@ function imagePreprocessor(options) {
 class Image extends svelte.SvelteComponentTyped {
 }
 
-exports.default = Image;
+exports.Image = Image;
 exports.imagePreprocessor = imagePreprocessor;

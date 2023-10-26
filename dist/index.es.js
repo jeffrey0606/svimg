@@ -518,4 +518,4 @@ function imagePreprocessor(options) {
 class Image extends SvelteComponentTyped {
 }
 
-export { Image as default, imagePreprocessor };
+export { Image, imagePreprocessor };

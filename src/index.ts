@@ -1,9 +1,9 @@
 export {
-  default as imagePreprocessor,
+  imagePreprocessor,
   type ImagePreprocessorOptions,
-} from './preprocessor/image-preprocessor';
+} from "./preprocessor/image-preprocessor";
 
-export type { SrcGenerator, SrcGeneratorInfo } from './core/path-to-url';
+export type { SrcGenerator, SrcGeneratorInfo } from "./core/path-to-url";
 
-import Image from './Image';
-export default Image;
+import Image from "./Image";
+export { Image };
