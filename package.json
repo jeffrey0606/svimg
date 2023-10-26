@@ -6,10 +6,9 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "svelte": "src/Image.svelte",
-  "type": "module",
   "files": [
     "dist",
-    "src"
+    "src/Image.svelte"
   ],
   "types": "dist/index.d.ts",
   "scripts": {
