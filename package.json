@@ -13,7 +13,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c --experimental-specifier-resolution=node",
+    "build": "rollup -c",
     "watch": "rollup -cw",
     "install": "npm run build"
   },
