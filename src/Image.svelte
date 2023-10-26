@@ -7,7 +7,7 @@
   export let alt;
   let className = "";
   export { className as class };
-  let styleName = "";
+  let styleName = ""; //extra styling
   export { styleName as style };
   export let srcset;
   export let srcsetwebp = "";
