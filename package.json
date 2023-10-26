@@ -9,7 +9,7 @@
   "type": "module",
   "files": [
     "dist",
-    "src/Image.svelte"
+    "src"
   ],
   "types": "dist/index.d.ts",
   "scripts": {
