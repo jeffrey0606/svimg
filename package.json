@@ -8,8 +8,7 @@
   "svelte": "src/Image.svelte",
   "type": "module",
   "files": [
-    "dist",
-    "src/Image.svelte"
+    "*"
   ],
   "types": "dist/index.d.ts",
   "scripts": {
