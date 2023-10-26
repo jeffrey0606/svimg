@@ -13,9 +13,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c",
+    "build": "rollup -c --experimental-specifier-resolution=node",
     "watch": "rollup -cw",
-    "install": "npm run build --experimental-specifier-resolution=node"
+    "install": "npm run build"
   },
   "engines": {
     "node": ">=14.18.0"
