@@ -6,7 +6,6 @@ interface GenerateComponentAttributesOptions {
     queue?: Queue;
     inputDir: string;
     outputDir: string;
-    publicPath?: string;
     webp?: boolean;
     avif?: boolean;
     widths?: number[];

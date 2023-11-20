@@ -1,4 +1,4 @@
-import { SvelteComponentTyped } from "svelte";
+import { SvelteComponent } from 'svelte';
 export interface ImageProps {
     /**
      * Image url
@@ -12,18 +12,6 @@ export interface ImageProps {
      * CSS classes to apply to image
      */
     class?: string;
-    /**
-     * CSS style to apply to image
-     */
-    style?: string;
-    /**
-     * called when the image is loaded
-     */
-    onLoad?: Function;
-    /**
-     * called when the image failed load
-     */
-    onError?: Function;
     /**
      * Resize image to specified width in pixels
      */
@@ -51,5 +39,5 @@ export interface ImageProps {
  * Image lazy loading Svelte component
  * for the svimg package
  */
-export default class Image extends SvelteComponentTyped<ImageProps> {
+export default class Image extends SvelteComponent<ImageProps> {
 }

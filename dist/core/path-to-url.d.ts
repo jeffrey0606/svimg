@@ -8,7 +8,6 @@ interface PathToUrlOptions {
     inputDir: string;
     src: string;
     outputDir: string;
-    publicPath?: string;
     srcGenerator?: SrcGenerator;
 }
 export default function pathToUrl(path: string, options?: PathToUrlOptions): string;
