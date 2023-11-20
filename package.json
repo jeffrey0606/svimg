@@ -17,8 +17,7 @@
   },
   "svelte": "src/Image.svelte",
   "files": [
-    "dist",
-    "src/Image.svelte"
+    "*"
   ],
   "typesVersions": {
     ">4.0": {
