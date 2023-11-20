@@ -3,20 +3,21 @@ import { join, basename, extname } from 'node:path';
 import Queue from '../../src/core/queue';
 import createPlaceholder from '../../src/placeholder/create-placeholder';
 import processImage from '../../src/image-processing/process-image';
+import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest';
 
-jest.mock('../../src/core/queue');
-jest.mock('../../src/placeholder/create-placeholder');
-jest.mock('../../src/image-processing/process-image');
+vi.mock('../../src/core/queue');
+vi.mock('../../src/placeholder/create-placeholder');
+vi.mock('../../src/image-processing/process-image');
 
 describe('generateComponentAttributes', () => {
   beforeEach(() => {
-    (createPlaceholder as jest.Mock).mockReset();
-    (processImage as jest.Mock).mockReset();
-    (Queue as jest.Mock).mockReset();
+    (createPlaceholder as Mock).mockReset();
+    (processImage as Mock).mockReset();
+    (Queue as Mock).mockReset();
   });
 
   it("won't process without src", async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
     await expect(
       generateComponentAttributes({
         src: '',
@@ -32,7 +33,7 @@ describe('generateComponentAttributes', () => {
   });
 
   it("won't process without input dir", async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
     await expect(
       generateComponentAttributes({
         src: 'assets/images/avatar.jpg',
@@ -48,7 +49,7 @@ describe('generateComponentAttributes', () => {
   });
 
   it("won't process without output dir", async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
     await expect(
       generateComponentAttributes({
         src: 'assets/images/avatar.jpg',
@@ -64,8 +65,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -106,7 +107,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -144,8 +145,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src with webp = true and avif = true', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -186,7 +187,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -227,8 +228,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src with webp = false and avif = true', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -258,7 +259,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -297,8 +298,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src with webp = true and avif = false', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -328,7 +329,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -367,8 +368,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src with webp = false and avif = false', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -387,7 +388,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -424,8 +425,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process src with widths', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -451,7 +452,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -489,8 +490,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will process images with custom quality', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -516,7 +517,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -554,10 +555,10 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will create queues if not provided', async () => {
-    (Queue as jest.Mock).mockReturnValue({
+    (Queue as Mock).mockReturnValue({
       enqueue: true,
     });
-    (processImage as jest.Mock).mockImplementation(() =>
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -598,7 +599,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -636,8 +637,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will skip image generation', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -678,7 +679,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -719,8 +720,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will skip placeholder', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -761,7 +762,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -797,8 +798,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('can add a custom path to all urls with src generator', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -839,7 +840,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -864,8 +865,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('can add a custom domain to all urls with src generator', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -906,7 +907,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -931,8 +932,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('can rewrite paths for all urls with src generator', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -973,7 +974,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -995,8 +996,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('can conditionally rewrite paths for all urls with src generator', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -1037,7 +1038,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -1062,8 +1063,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('can handle different input/output dirs with src generator', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock).mockImplementation(() =>
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock).mockImplementation(() =>
       Promise.resolve({
         images: [
           {
@@ -1104,7 +1105,7 @@ describe('generateComponentAttributes', () => {
         aspectRatio: 0.5,
       }),
     );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -1140,8 +1141,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will generate placeholder files', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock)
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
           images: [
@@ -1209,7 +1210,7 @@ describe('generateComponentAttributes', () => {
           aspectRatio: 0.5,
         }),
       );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -1259,8 +1260,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will generate placeholder files without avif', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock)
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
           images: [
@@ -1311,7 +1312,7 @@ describe('generateComponentAttributes', () => {
           aspectRatio: 0.5,
         }),
       );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -1359,8 +1360,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will generate placeholder files without webp', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock)
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
           images: [
@@ -1411,7 +1412,7 @@ describe('generateComponentAttributes', () => {
           aspectRatio: 0.5,
         }),
       );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 
@@ -1459,8 +1460,8 @@ describe('generateComponentAttributes', () => {
   });
 
   it('will generate placeholder files without webp or avif', async () => {
-    const queue = jest.fn(() => ({ enqueue: jest.fn() }));
-    (processImage as jest.Mock)
+    const queue = vi.fn(() => ({ enqueue: vi.fn() }));
+    (processImage as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve({
           images: [
@@ -1494,7 +1495,7 @@ describe('generateComponentAttributes', () => {
           aspectRatio: 0.5,
         }),
       );
-    (createPlaceholder as jest.Mock).mockImplementation(() =>
+    (createPlaceholder as Mock).mockImplementation(() =>
       Promise.resolve('<svg />'),
     );
 

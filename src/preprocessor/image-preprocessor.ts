@@ -1,11 +1,11 @@
 import type {
   PreprocessorGroup,
   Processed,
-} from "svelte/types/compiler/preprocess";
-import Queue from "../core/queue";
-import replaceAsync from "string-replace-async";
-import processImageElement from "./process-image-element";
-import type { SrcGenerator } from "../core/path-to-url";
+} from 'svelte/types/compiler/preprocess';
+import Queue from '../core/queue';
+import replaceAsync from 'string-replace-async';
+import processImageElement from './process-image-element';
+import type { SrcGenerator } from '../core/path-to-url';
 
 export interface ImagePreprocessorOptions {
   /**
@@ -20,20 +20,6 @@ export interface ImagePreprocessorOptions {
    * subdirectory within the normal static asset directory
    */
   outputDir: string;
-
-  /**
-   * The public path that images will be served from.
-   * This will be prepended to the src url during preprocessing.
-   *
-   * This can be overridden for more advanced use cases, such as
-   * a site served from a subdirectory of the domain or for
-   * images served from a separate domain such as a CDN or
-   * static asset domain.
-   *
-   * @default The outputDir relative to the inputDir static asset directory
-   * @deprecated Use a srcGenerator instead: (path) => '/my/public/path' + path
-   */
-  publicPath?: string;
 
   /**
    * Whether to generate WebP versions of images
@@ -85,8 +71,8 @@ export interface ImagePreprocessorOptions {
  * @param options Image preprocessor options
  * @returns Svelte preprocessor
  */
-export function imagePreprocessor(
-  options?: ImagePreprocessorOptions
+export default function imagePreprocessor(
+  options: ImagePreprocessorOptions,
 ): PreprocessorGroup {
   const queue = new Queue();
 
@@ -94,7 +80,7 @@ export function imagePreprocessor(
     async markup({ content }): Promise<Processed> {
       return {
         code: await replaceAsync(content, /<Image[^>]+>/g, (element) =>
-          processImageElement(element, queue, options)
+          processImageElement(element, queue, options),
         ),
       };
     },

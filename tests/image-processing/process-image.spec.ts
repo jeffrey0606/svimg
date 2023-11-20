@@ -6,19 +6,20 @@ import getOptionsHash from '../../src/image-processing/get-options-hash';
 import getImageMetadata from '../../src/core/get-image-metadata';
 import exists from '../../src/core/exists';
 import { mkdir } from 'node:fs/promises';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 
-jest.mock('../../src/image-processing/get-process-image-options');
-jest.mock('../../src/image-processing/resize-image-multiple');
-jest.mock('../../src/image-processing/get-options-hash');
+vi.mock('../../src/image-processing/get-process-image-options');
+vi.mock('../../src/image-processing/resize-image-multiple');
+vi.mock('../../src/image-processing/get-options-hash');
 
 describe('processImage', () => {
   beforeEach(() => {
-    (getProcessImageOptions as jest.Mock).mockReset();
-    (resizeImageMultiple as jest.Mock).mockReset();
+    (getProcessImageOptions as Mock).mockReset();
+    (resizeImageMultiple as Mock).mockReset();
   });
 
   it('requires an input file', async () => {
-    const enqueue = jest.fn();
+    const enqueue = vi.fn();
     await expect(
       processImage('/in/file.jpg', '', { enqueue } as any),
     ).rejects.toThrow();
@@ -28,7 +29,7 @@ describe('processImage', () => {
   });
 
   it('requires an output dir', async () => {
-    const enqueue = jest.fn();
+    const enqueue = vi.fn();
     await expect(
       processImage('', '/out/dir', { enqueue } as any),
     ).rejects.toThrow();
@@ -38,15 +39,16 @@ describe('processImage', () => {
   });
 
   it("creates the dir if it doesn't exist", async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(false))
       .mockImplementationOnce(() =>
         Promise.resolve({
           width: 300,
+          height: 300,
         }),
       );
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
     });
@@ -60,15 +62,16 @@ describe('processImage', () => {
   });
 
   it("won't create the dir if it exists", async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(true))
       .mockImplementationOnce(() =>
         Promise.resolve({
           width: 300,
+          height: 300,
         }),
       );
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
     });
@@ -82,12 +85,13 @@ describe('processImage', () => {
   });
 
   it("won't create the dir if skipping generation", async () => {
-    const enqueue = jest.fn().mockImplementationOnce(() =>
+    const enqueue = vi.fn().mockImplementationOnce(() =>
       Promise.resolve({
         width: 300,
+        height: 300,
       }),
     );
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
     });
@@ -103,7 +107,7 @@ describe('processImage', () => {
   });
 
   it('resizes images with hashed filename generator', async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(true))
       .mockImplementationOnce(() =>
@@ -113,13 +117,13 @@ describe('processImage', () => {
         }),
       )
       .mockImplementationOnce(() => Promise.resolve('filehash'));
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
       webp: false,
       avif: false,
     });
-    (resizeImageMultiple as jest.Mock).mockImplementation(() =>
+    (resizeImageMultiple as Mock).mockImplementation(() =>
       Promise.resolve([
         {
           path: '/out/dir/file.1.jpg',
@@ -133,7 +137,7 @@ describe('processImage', () => {
         },
       ]),
     );
-    (getOptionsHash as jest.Mock).mockReturnValue('optionshash');
+    (getOptionsHash as Mock).mockReturnValue('optionshash');
 
     expect(
       await processImage('/in/file.jpg', '/out/dir', { enqueue } as any, {
@@ -182,15 +186,15 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGenerator = (resizeImageMultiple as jest.Mock).mock
-      .calls[0][3].filenameGenerator;
-    expect(filenameGenerator({ width: 300, quality: 85 })).toEqual(
+    const filenameGenerator =
+      vi.mocked(resizeImageMultiple).mock.calls[0][3].filenameGenerator;
+    expect(filenameGenerator({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.jpg',
     );
   });
 
   it('generates webp images if requested', async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(true))
       .mockImplementationOnce(() =>
@@ -200,13 +204,13 @@ describe('processImage', () => {
         }),
       )
       .mockImplementationOnce(() => Promise.resolve('filehash'));
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
       webp: true,
       avif: false,
     });
-    (resizeImageMultiple as jest.Mock)
+    (resizeImageMultiple as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve([
           {
@@ -235,7 +239,7 @@ describe('processImage', () => {
           },
         ]),
       );
-    (getOptionsHash as jest.Mock).mockReturnValue('optionshash');
+    (getOptionsHash as Mock).mockReturnValue('optionshash');
 
     expect(
       await processImage('/in/file.jpg', '/out/dir', { enqueue } as any, {
@@ -296,9 +300,9 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGenerator = (resizeImageMultiple as jest.Mock).mock
-      .calls[0][3].filenameGenerator;
-    expect(filenameGenerator({ width: 300, quality: 85 })).toEqual(
+    const filenameGenerator =
+      vi.mocked(resizeImageMultiple).mock.calls[0][3].filenameGenerator;
+    expect(filenameGenerator({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.jpg',
     );
 
@@ -313,15 +317,15 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGeneratorWebp = (resizeImageMultiple as jest.Mock).mock
-      .calls[1][3].filenameGenerator;
-    expect(filenameGeneratorWebp({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorWebp =
+      vi.mocked(resizeImageMultiple).mock.calls[1][3].filenameGenerator;
+    expect(filenameGeneratorWebp({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.webp',
     );
   });
 
   it('generates avif images if requested', async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(true))
       .mockImplementationOnce(() =>
@@ -331,13 +335,13 @@ describe('processImage', () => {
         }),
       )
       .mockImplementationOnce(() => Promise.resolve('filehash'));
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
       webp: false,
       avif: true,
     });
-    (resizeImageMultiple as jest.Mock)
+    (resizeImageMultiple as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve([
           {
@@ -366,7 +370,7 @@ describe('processImage', () => {
           },
         ]),
       );
-    (getOptionsHash as jest.Mock).mockReturnValue('optionshash');
+    (getOptionsHash as Mock).mockReturnValue('optionshash');
 
     expect(
       await processImage('/in/file.jpg', '/out/dir', { enqueue } as any, {
@@ -427,9 +431,9 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGenerator = (resizeImageMultiple as jest.Mock).mock
-      .calls[0][3].filenameGenerator;
-    expect(filenameGenerator({ width: 300, quality: 85 })).toEqual(
+    const filenameGenerator =
+      vi.mocked(resizeImageMultiple).mock.calls[0][3].filenameGenerator;
+    expect(filenameGenerator({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.jpg',
     );
 
@@ -444,15 +448,15 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGeneratorAvif = (resizeImageMultiple as jest.Mock).mock
-      .calls[1][3].filenameGenerator;
-    expect(filenameGeneratorAvif({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorAvif =
+      vi.mocked(resizeImageMultiple).mock.calls[1][3].filenameGenerator;
+    expect(filenameGeneratorAvif({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.avif',
     );
   });
 
   it('generates webp and avif images if requested', async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() => Promise.resolve(true))
       .mockImplementationOnce(() =>
@@ -462,13 +466,13 @@ describe('processImage', () => {
         }),
       )
       .mockImplementationOnce(() => Promise.resolve('filehash'));
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
       webp: true,
       avif: true,
     });
-    (resizeImageMultiple as jest.Mock)
+    (resizeImageMultiple as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve([
           {
@@ -511,7 +515,7 @@ describe('processImage', () => {
           },
         ]),
       );
-    (getOptionsHash as jest.Mock).mockReturnValue('optionshash');
+    (getOptionsHash as Mock).mockReturnValue('optionshash');
 
     expect(
       await processImage('/in/file.jpg', '/out/dir', { enqueue } as any, {
@@ -583,9 +587,9 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGenerator = (resizeImageMultiple as jest.Mock).mock
-      .calls[0][3].filenameGenerator;
-    expect(filenameGenerator({ width: 300, quality: 85 })).toEqual(
+    const filenameGenerator =
+      vi.mocked(resizeImageMultiple).mock.calls[0][3].filenameGenerator;
+    expect(filenameGenerator({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.jpg',
     );
 
@@ -600,9 +604,9 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGeneratorWebp = (resizeImageMultiple as jest.Mock).mock
-      .calls[1][3].filenameGenerator;
-    expect(filenameGeneratorWebp({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorWebp =
+      vi.mocked(resizeImageMultiple).mock.calls[1][3].filenameGenerator;
+    expect(filenameGeneratorWebp({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.webp',
     );
 
@@ -617,15 +621,15 @@ describe('processImage', () => {
         aspectRatio: 1,
       },
     );
-    const filenameGeneratorAvif = (resizeImageMultiple as jest.Mock).mock
-      .calls[2][3].filenameGenerator;
-    expect(filenameGeneratorAvif({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorAvif =
+      vi.mocked(resizeImageMultiple).mock.calls[2][3].filenameGenerator;
+    expect(filenameGeneratorAvif({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.avif',
     );
   });
 
   it('skips generation', async () => {
-    const enqueue = jest
+    const enqueue = vi
       .fn()
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -634,13 +638,13 @@ describe('processImage', () => {
         }),
       )
       .mockImplementationOnce(() => Promise.resolve('filehash'));
-    (getProcessImageOptions as jest.Mock).mockReturnValue({
+    (getProcessImageOptions as Mock).mockReturnValue({
       widths: [200, 300],
       quality: 85,
       webp: true,
       avif: true,
     });
-    (resizeImageMultiple as jest.Mock)
+    (resizeImageMultiple as Mock)
       .mockImplementationOnce(() =>
         Promise.resolve([
           {
@@ -683,7 +687,7 @@ describe('processImage', () => {
           },
         ]),
       );
-    (getOptionsHash as jest.Mock).mockReturnValue('optionshash');
+    (getOptionsHash as Mock).mockReturnValue('optionshash');
 
     expect(
       await processImage('/in/file.jpg', '/out/dir', { enqueue } as any, {
@@ -757,9 +761,9 @@ describe('processImage', () => {
         skipGeneration: true,
       },
     );
-    const filenameGenerator = (resizeImageMultiple as jest.Mock).mock
-      .calls[0][3].filenameGenerator;
-    expect(filenameGenerator({ width: 300, quality: 85 })).toEqual(
+    const filenameGenerator =
+      vi.mocked(resizeImageMultiple).mock.calls[0][3].filenameGenerator;
+    expect(filenameGenerator({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.jpg',
     );
 
@@ -775,9 +779,9 @@ describe('processImage', () => {
         skipGeneration: true,
       },
     );
-    const filenameGeneratorWebp = (resizeImageMultiple as jest.Mock).mock
-      .calls[1][3].filenameGenerator;
-    expect(filenameGeneratorWebp({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorWebp =
+      vi.mocked(resizeImageMultiple).mock.calls[1][3].filenameGenerator;
+    expect(filenameGeneratorWebp({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.webp',
     );
 
@@ -793,9 +797,9 @@ describe('processImage', () => {
         skipGeneration: true,
       },
     );
-    const filenameGeneratorAvif = (resizeImageMultiple as jest.Mock).mock
-      .calls[2][3].filenameGenerator;
-    expect(filenameGeneratorAvif({ width: 300, quality: 85 })).toEqual(
+    const filenameGeneratorAvif =
+      vi.mocked(resizeImageMultiple).mock.calls[2][3].filenameGenerator;
+    expect(filenameGeneratorAvif({ width: 300, quality: 85 } as any)).toEqual(
       'file.optionshash.filehash.avif',
     );
   });

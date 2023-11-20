@@ -1,5 +1,6 @@
-import pathToUrl from '../../src/core/path-to-url';
+import pathToUrl, { SrcGenerator } from '../../src/core/path-to-url';
 import { basename } from 'node:path';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('pathToUrl', () => {
   it('returns url if nothing needs to be normalized', () => {
@@ -113,161 +114,8 @@ describe('pathToUrl', () => {
     ).toEqual('g/url/to/file.jpg');
   });
 
-  it('uses public path if given', () => {
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: '/subdir',
-      }),
-    ).toEqual('/subdir/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: '/subdir/',
-      }),
-    ).toEqual('/subdir/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/subdir',
-      }),
-    ).toEqual('/subdir/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/subdir',
-      }),
-    ).toEqual('/subdir/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static\\',
-        outputDir: 'static\\g\\',
-        publicPath: '/subdir',
-      }),
-    ).toEqual('/subdir/url/to/file.jpg');
-    expect(
-      pathToUrl('other/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/subdir',
-      }),
-    ).toEqual('/subdir/other/g/url/to/file.jpg');
-  });
-
-  it('can use a root public path', () => {
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: '/',
-      }),
-    ).toEqual('/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: '/',
-      }),
-    ).toEqual('/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/',
-      }),
-    ).toEqual('/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/',
-      }),
-    ).toEqual('/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static\\',
-        outputDir: 'static\\g\\',
-        publicPath: '/',
-      }),
-    ).toEqual('/url/to/file.jpg');
-    expect(
-      pathToUrl('other/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: '/',
-      }),
-    ).toEqual('/other/g/url/to/file.jpg');
-  });
-
-  it('can use an external public path', () => {
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static',
-        outputDir: 'static/g',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/url/to/file.jpg');
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/url/to/file.jpg');
-    expect(
-      pathToUrl('static\\g\\url\\to\\file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static\\',
-        outputDir: 'static\\g\\',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/url/to/file.jpg');
-    expect(
-      pathToUrl('other/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g/',
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('http://example.com/images/other/g/url/to/file.jpg');
-  });
-
   it('can use a custom src generator to add a custom path', () => {
-    const generator = jest.fn((path, info) => '/test/' + path);
+    const generator = vi.fn((path, info) => '/test/' + path);
 
     expect(
       pathToUrl('static/g/url/to/file.jpg', {
@@ -286,7 +134,7 @@ describe('pathToUrl', () => {
   });
 
   it('can use a custom src generator to add a custom domain', () => {
-    const generator = jest.fn(
+    const generator = vi.fn(
       (path, info) => 'https://static.example.com/images/' + path,
     );
 
@@ -307,7 +155,7 @@ describe('pathToUrl', () => {
   });
 
   it('can use a custom src generator to rewrite paths', () => {
-    const generator = jest.fn(
+    const generator = vi.fn(
       (path, info) => 'some/other/path/' + basename(path),
     );
 
@@ -319,26 +167,6 @@ describe('pathToUrl', () => {
         srcGenerator: generator,
       }),
     ).toEqual('some/other/path/file.jpg');
-
-    expect(generator).toHaveBeenCalledWith('url/to/file.jpg', {
-      src: 'url/to/infile.jpg',
-      inputDir: 'static/',
-      outputDir: 'static/g',
-    });
-  });
-
-  it('will prioritize src generator over public path', () => {
-    const generator = jest.fn((path, info) => '/test/' + path);
-
-    expect(
-      pathToUrl('static/g/url/to/file.jpg', {
-        src: 'url/to/infile.jpg',
-        inputDir: 'static/',
-        outputDir: 'static/g',
-        srcGenerator: generator,
-        publicPath: 'http://example.com/images',
-      }),
-    ).toEqual('/test/url/to/file.jpg');
 
     expect(generator).toHaveBeenCalledWith('url/to/file.jpg', {
       src: 'url/to/infile.jpg',

@@ -1,4 +1,5 @@
 import getComponentAttributes from '../../src/component/get-component-attributes';
+import { describe, it, expect } from 'vitest';
 
 describe('getComponentAttributes', () => {
   it('returns single srcset', () => {
